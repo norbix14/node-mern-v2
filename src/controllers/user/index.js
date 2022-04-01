@@ -503,7 +503,7 @@ const checkUserExistAndResetPassword = async (req, res, next) => {
 */
 const getUserProfileData = async (req, res, next) => {
 	let jsonResponse, status, userData;
-	const { authToken } = req;
+	const { authToken, decodedToken } = req;
 	jsonResponse = {
 		details: {},
 		msg: 'User profile data',
@@ -511,7 +511,7 @@ const getUserProfileData = async (req, res, next) => {
 		token: '',
 	};
 	try {
-		userData = await User.findById(authToken.id);
+		userData = await User.findById(decodedToken.id);
 		userData.password = '**********';
 		jsonResponse.token = authToken;
 		jsonResponse.user = userData;

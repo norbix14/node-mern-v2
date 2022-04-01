@@ -53,12 +53,14 @@ const askTokenIsValid = (req, res, next) => {
 	try {
 		validAndDecodedToken = verifyJwt(authToken);
 		if (validAndDecodedToken) {
-			req.authToken = validAndDecodedToken;
+			req.decodedToken = validAndDecodedToken;
+			req.authToken = authToken;
 			return next();
 		} else {
 			status = 400;
 		}
 	} catch (error) {
+		delete req.decodedToken;
 		delete req.authToken;
 		status = status || 500;
 		jsonResponse.msg = error.message || 'Something wrong happened';
