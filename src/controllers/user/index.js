@@ -1,7 +1,12 @@
 import User from '../../models/User.js';
 
-import { randomID } from '../../helpers/id-generator.js';
-import { generateJWT } from '../../helpers/jwt-generator.js';
+import {
+	randomID
+} from '../../helpers/id-generator.js';
+import {
+	generateJwt,
+	decodeJwt
+} from '../../helpers/jwt-generator.js';
 import {
 	encryptPassword,
 	verifyPassword
@@ -326,21 +331,28 @@ const askUserPasswordMatch = async (req, res, next) => {
  * @param {Function} next - go to the next middleware
 */
 const loginUser = async (req, res, next) => {
-	let jsonResponse, status, payload;
+	let jsonResponse, status, payload, token, decodedToken;
 	const { currentUser } = req;
 	jsonResponse = {
 		details: {},
 		msg: 'User logged',
 		user: {},
 		token: '',
+		session: {},
 	};
 	try {
 		payload = {
 			id: currentUser._id,
 		}
+		token = generateJwt(payload);
+		decodedToken = decodeJwt(token);
 		currentUser.password = '**********';
 		jsonResponse.user = currentUser;
-		jsonResponse.token = generateJWT(payload);
+		jsonResponse.token = token;
+		jsonResponse.session = {
+			creation: Number(decodedToken.iat + '000') || null,
+			expiration: Number(decodedToken.exp + '000') || null,
+		};
 		status = 200;
 	} catch (error) {
 		status = status || 500;
@@ -509,12 +521,17 @@ const getUserProfileData = async (req, res, next) => {
 		msg: 'User profile data',
 		user: {},
 		token: '',
+		session: {}
 	};
 	try {
 		userData = await User.findById(decodedToken.id);
 		userData.password = '**********';
 		jsonResponse.token = authToken;
 		jsonResponse.user = userData;
+		jsonResponse.session = {
+			creation: Number(decodedToken.iat + '000') || null,
+			expiration: Number(decodedToken.exp + '000') || null,
+		};
 		status = 200;
 	} catch (error) {
 		status = status || 500;

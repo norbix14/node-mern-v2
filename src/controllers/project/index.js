@@ -10,14 +10,14 @@ import Task from '../../models/Task.js';
 */
 const getProjects = async (req, res, next) => {
 	let jsonResponse, status, projects;
-	const { authToken } = req;
+	const { decodedToken } = req;
 	jsonResponse = {
 		details: {},
 		msg: 'All projects',
 		projects: [],
 	};
 	try {
-		projects = await Project.find().where("owner").equals(authToken.id);
+		projects = await Project.find().where("owner").equals(decodedToken.id);
 		jsonResponse.projects = projects;
 		status = 200;
 	} catch (error) {
@@ -69,7 +69,7 @@ const getProject = async (req, res, next) => {
 */
 const createProject = async (req, res, next) => {
 	let jsonResponse, status, project, owner;
-	const { body, authToken } = req;
+	const { body, decodedToken } = req;
 	jsonResponse = {
 		details: {},
 		msg: 'Project created',
@@ -77,7 +77,7 @@ const createProject = async (req, res, next) => {
 		owner: {},
 	};
 	try {
-		owner = authToken.id;
+		owner = decodedToken.id;
 		project = new Project(body);
 		project.owner = owner;
 		await project.save();
@@ -257,7 +257,7 @@ const askProjectExistById = async (req, res, next) => {
 */
 const aksProjectOwnership = async (req, res, next) => {
 	let jsonResponse, status, tasks;
-	const { projectData, authToken: { id } } = req;
+	const { projectData, decodedToken: { id } } = req;
 	jsonResponse = {
 		details: {},
 		msg: 'Project',

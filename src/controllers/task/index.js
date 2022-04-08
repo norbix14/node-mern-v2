@@ -10,7 +10,7 @@ import Task from '../../models/Task.js';
 */
 const getTasks = async (req, res, next) => {
 	let jsonResponse, status, tasks;
-	const { authToken } = req;
+	const { decodedToken } = req;
 	jsonResponse = {
 		details: {},
 		msg: 'All tasks',
@@ -69,7 +69,7 @@ const getTask = async (req, res, next) => {
 */
 const getTasksByProjectId = async (req, res, next) => {
 	let jsonResponse, status, tasks;
-	const { params: { id }, authToken } = req;
+	const { params: { id }, decodedToken } = req;
 	jsonResponse = {
 		details: {},
 		msg: 'Tasks by project id',
@@ -256,7 +256,7 @@ const askProjectExistById = async (req, res, next) => {
 */
 const askProjectOwnership = async (req, res, next) => {
 	let jsonResponse, status;
-	const { projectData, authToken: { id } } = req;
+	const { projectData, decodedToken: { id } } = req;
 	jsonResponse = {
 		details: {},
 		msg: 'Project',
@@ -324,14 +324,14 @@ const askTaskExistById = async (req, res, next) => {
 */
 const askTaskOwnership = async (req, res, next) => {
 	let jsonResponse, status, task;
-	const { authToken, taskData } = req;
+	const { decodedToken, taskData } = req;
 	jsonResponse = {
 		details: {},
 		msg: 'Permission denied. You do not own this task',
 		task: {},
 	};
 	try {
-		if (taskData.project.owner.toString() !== authToken.id.toString()) {
+		if (taskData.project.owner.toString() !== decodedToken.id.toString()) {
 			delete req.taskData;
 			status = 401;
 		} else {
