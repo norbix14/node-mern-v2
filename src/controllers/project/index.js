@@ -111,7 +111,7 @@ const updateProject = async (req, res, next) => {
 		project: {},
 	};
 	try {
-		project = await Project.findById(projectData._id);
+		project = await Project.findById(projectData.project._id);
 		project.name = body.name || project.name;
 		project.description = body.description || project.description;
 		project.timeline = body.timeline || project.timeline;
@@ -146,7 +146,7 @@ const deleteProject = async (req, res, next) => {
 		project: {},
 	};
 	try {
-		await Project.deleteOne({ _id: projectData._id });
+		await Project.deleteOne({ _id: projectData.project._id });
 		delete req.projectData;
 		status = 200;
 	} catch (error) {
