@@ -27,11 +27,17 @@ const projectSchema = new Schema(
 			type: Schema.Types.ObjectId,
 			ref: 'User',
 		},
-		colaborators: [
+		tasks: [
+			{
+				type: Schema.Types.ObjectId,
+				ref: 'Task',
+			},
+		],
+		collaborators: [
 			{
 				type: Schema.Types.ObjectId,
 				ref: 'User',
-			}
+			},
 		],
 	},
 	{

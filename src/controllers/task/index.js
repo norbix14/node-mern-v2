@@ -162,7 +162,7 @@ const deleteTask = async (req, res, next) => {
  * @param {Function} next - go to the next middleware
 */
 const createTask = async (req, res, next) => {
-	let jsonResponse, status, task;
+	let jsonResponse, status, task, project;
 	const { body, projectData } = req;
 	jsonResponse = {
 		details: {},
@@ -173,6 +173,9 @@ const createTask = async (req, res, next) => {
 		task = new Task(body);
 		task.project = projectData._id;
 		await task.save();
+		project = await Project.findById(projectData._id);
+		project.tasks.push(task._id);
+		await project.save();
 		jsonResponse.task = task;
 		status = 200;
 	} catch (error) {

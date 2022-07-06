@@ -17,7 +17,10 @@ const getProjects = async (req, res, next) => {
 		projects: [],
 	};
 	try {
-		projects = await Project.find().where("owner").equals(decodedToken.id);
+		projects = await Project.find()
+			.where("owner")
+			.equals(decodedToken.id)
+			.select('-collaborators -tasks');
 		jsonResponse.projects = projects;
 		status = 200;
 	} catch (error) {
@@ -230,7 +233,7 @@ const askProjectExistById = async (req, res, next) => {
 		project: {},
 	};
 	try {
-		project = await Project.findById(id);
+		project = await Project.findById(id).populate('tasks');
 		if (project) {
 			req.projectData = project;
 			return next();
@@ -269,10 +272,10 @@ const aksProjectOwnership = async (req, res, next) => {
 			jsonResponse.msg = 'Permission denied. You do not own this project';
 			status = 401;
 		} else {
-			tasks = await Task.find().where('project').equals(projectData._id);
+			//tasks = await Task.find().where('project').equals(projectData._id);
 			req.projectData = {
 				project: projectData,
-				tasks,
+				tasks: [],
 			};
 			return next();
 		}
