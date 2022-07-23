@@ -9,18 +9,19 @@ import Task from '../../models/Task.js';
  * @param {Function} next - go to the next middleware
 */
 const getProjects = async (req, res, next) => {
-	let jsonResponse, status, projects;
+	let jsonResponse, status, projects, selects;
 	const { decodedToken } = req;
 	jsonResponse = {
 		details: {},
 		msg: 'All projects',
 		projects: [],
 	};
+	selects = ['_id', 'name', 'client'];
 	try {
 		projects = await Project.find()
 			.where("owner")
 			.equals(decodedToken.id)
-			.select('-collaborators -tasks');
+			.select(selects);
 		jsonResponse.projects = projects;
 		status = 200;
 	} catch (error) {
@@ -42,7 +43,7 @@ const getProjects = async (req, res, next) => {
  * @param {Function} next - go to the next middleware
 */
 const getProject = async (req, res, next) => {
-	let jsonResponse, status;
+	let jsonResponse, status, project;
 	const { projectData } = req;
 	jsonResponse = {
 		details: {},
@@ -50,7 +51,8 @@ const getProject = async (req, res, next) => {
 		project: {},
 	};
 	try {
-		jsonResponse.project = projectData;
+		project = await Project.findById(projectData._id).populate('tasks');
+		jsonResponse.project = project;
 		status = 200;
 	} catch (error) {
 		status = status || 500;
@@ -114,7 +116,7 @@ const updateProject = async (req, res, next) => {
 		project: {},
 	};
 	try {
-		project = await Project.findById(projectData.project._id);
+		project = await Project.findById(projectData._id);
 		project.name = body.name || project.name;
 		project.description = body.description || project.description;
 		project.timeline = body.timeline || project.timeline;
@@ -149,7 +151,7 @@ const deleteProject = async (req, res, next) => {
 		project: {},
 	};
 	try {
-		await Project.deleteOne({ _id: projectData.project._id });
+		await Project.deleteOne({ _id: projectData._id });
 		delete req.projectData;
 		status = 200;
 	} catch (error) {
@@ -225,15 +227,16 @@ const deleteColaborator = async (req, res, next) => {
  * @param {Function} next - go to the next middleware
 */
 const askProjectExistById = async (req, res, next) => {
-	let jsonResponse, status, project;
+	let jsonResponse, status, project, selects;
 	const { params: { id } } = req;
 	jsonResponse = {
 		details: {},
 		msg: 'Project not found',
 		project: {},
 	};
+	selects = ['_id', 'owner'];
 	try {
-		project = await Project.findById(id).populate('tasks');
+		project = await Project.findById(id).select(selects);
 		if (project) {
 			req.projectData = project;
 			return next();
@@ -272,11 +275,7 @@ const aksProjectOwnership = async (req, res, next) => {
 			jsonResponse.msg = 'Permission denied. You do not own this project';
 			status = 401;
 		} else {
-			//tasks = await Task.find().where('project').equals(projectData._id);
-			req.projectData = {
-				project: projectData,
-				tasks: [],
-			};
+			req.projectData = projectData;
 			return next();
 		}
 	} catch (error) {

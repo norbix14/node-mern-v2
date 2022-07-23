@@ -224,15 +224,16 @@ const updateTaskStatus = async (req, res, next) => {
  * @param {Function} next - go to the next middleware
 */
 const askProjectExistById = async (req, res, next) => {
-	let jsonResponse, status, project;
+	let jsonResponse, status, project, selects;
 	const { body } = req;
 	jsonResponse = {
 		details: {},
 		msg: 'Project not found',
 		project: {},
 	};
+	selects = ['_id', 'owner'];
 	try {
-		project = await Project.findById(body.project);
+		project = await Project.findById(body.project).select(selects);
 		if (project) {
 			req.projectData = project;
 			return next();
