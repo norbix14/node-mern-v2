@@ -148,7 +148,7 @@ const deleteUser = async (req, res, next) => {
  * @param {Function} next - go to the next middleware
 */
 const checkUserExistByEmail = async (req, res, next) => {
-	let jsonResponse, status, userExist;
+	let jsonResponse, status, user;
 	const { body } = req;
 	const { email } = body;
 	jsonResponse = {
@@ -157,9 +157,9 @@ const checkUserExistByEmail = async (req, res, next) => {
 		user: {},
 	};
 	try {
-		userExist = await User.findOne({ email });
-		if (userExist) {
-			req.currentUser = userExist;
+		user = await User.findOne({ email });
+		if (user) {
+			req.currentUser = user;
 			return next();
 		} else {
 			status = 404;
@@ -185,7 +185,7 @@ const checkUserExistByEmail = async (req, res, next) => {
  * @param {Function} next - go to the next middleware
 */
 const askUserEmailIsInUse = async (req, res, next) => {
-	let jsonResponse, status, userEmailExist;
+	let jsonResponse, status, user, selects;
 	const { body } = req;
 	const { email } = body;
 	jsonResponse = {
@@ -193,9 +193,10 @@ const askUserEmailIsInUse = async (req, res, next) => {
 		msg: 'User email already exist',
 		user: {},
 	};
+	selects = ['_id', 'email', 'confirmed'];
 	try {
-		userEmailExist = await User.findOne({ email });
-		if (userEmailExist) {
+		user = await User.findOne({ email }).select(selects);
+		if (user) {
 			status = 400;
 			throw new Error('User email already exists');
 		} else {
@@ -221,21 +222,22 @@ const askUserEmailIsInUse = async (req, res, next) => {
  * @param {Function} next - go to the next middleware
 */
 const checkUserExistByToken = async (req, res, next) => {
-	let jsonResponse, status, userExist, token;
+	let jsonResponse, status, user, token, selects;
 	const { params } = req;
 	jsonResponse = {
 		details: {},
 		msg: 'User account exist',
 		user: {},
 	};
+	selects = ['-password'];
 	try {
 		token = params.token || '';
-		userExist = await User.findOne({ token });
-		if (userExist) {
-			userExist.confirmed = true;
-			userExist.token = '';
-			await userExist.save();
-			req.currentUser = userExist;
+		user = await User.findOne({ token }).select(selects);
+		if (user) {
+			user.confirmed = true;
+			user.token = '';
+			await user.save();
+			req.currentUser = user;
 			return next();
 		} else {
 			status = 404;
@@ -381,7 +383,6 @@ const informUserAccountIsConfirmed = async (req, res, next) => {
 		user: {},
 	};
 	try {
-		currentUser.password = '**********';
 		jsonResponse.user = currentUser;
 		status = 200;
 	} catch (error) {
@@ -440,7 +441,7 @@ const checkUserExistAndInformRecoverySteps = async (req, res, next) => {
  * @param {Function} next - go to the next middleware
 */
 const askUserTokenIsValid = async (req, res, next) => {
-	let jsonResponse, status, userExist, token;
+	let jsonResponse, status, user, token;
 	const { params } = req;
 	jsonResponse = {
 		details: {},
@@ -449,8 +450,8 @@ const askUserTokenIsValid = async (req, res, next) => {
 	};
 	try {
 		token = params.token || '';
-		userExist = await User.findOne({ token });
-		if (userExist) {
+		user = await User.findOne({ token });
+		if (user) {
 			status = 200;
 		} else {
 			status = 400;
@@ -514,7 +515,7 @@ const checkUserExistAndResetPassword = async (req, res, next) => {
  * @param {Function} next - go to the next middleware
 */
 const getUserProfileData = async (req, res, next) => {
-	let jsonResponse, status, userData;
+	let jsonResponse, status, user, selects;
 	const { authToken, decodedToken } = req;
 	jsonResponse = {
 		details: {},
@@ -523,11 +524,11 @@ const getUserProfileData = async (req, res, next) => {
 		token: '',
 		session: {}
 	};
+	selects = ['-password'];
 	try {
-		userData = await User.findById(decodedToken.id);
-		userData.password = '**********';
+		user = await User.findById(decodedToken.id).select(selects);
 		jsonResponse.token = authToken;
-		jsonResponse.user = userData;
+		jsonResponse.user = user;
 		jsonResponse.session = {
 			creation: Number(decodedToken.iat + '000') || null,
 			expiration: Number(decodedToken.exp + '000') || null,

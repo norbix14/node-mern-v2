@@ -293,15 +293,18 @@ const askProjectOwnership = async (req, res, next) => {
  * @param {Function} next - go to the next middleware
 */
 const askTaskExistById = async (req, res, next) => {
-	let jsonResponse, status, task;
+	let jsonResponse, status, task, selects;
 	const { params: { id } } = req;
 	jsonResponse = {
 		details: {},
 		msg: 'Task not found',
 		task: {},
 	};
+	selects = ['_id', 'project'];
 	try {
-		task = await Task.findById(id).populate('project');
+		task = await Task.findById(id)
+			.populate('project', '_id owner')
+			.select(selects);
 		if (task) {
 			req.taskData = task;
 			return next();
