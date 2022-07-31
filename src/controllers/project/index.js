@@ -5,7 +5,7 @@ import Task from '../../models/Task.js';
  * Get all projects
  * 
  * @param {Object} req - request
- * @param {Object} req - response
+ * @param {Object} res - response
  * @param {Function} next - go to the next middleware
 */
 const getProjects = async (req, res, next) => {
@@ -39,7 +39,7 @@ const getProjects = async (req, res, next) => {
  * Get project
  * 
  * @param {Object} req - request
- * @param {Object} req - response
+ * @param {Object} res - response
  * @param {Function} next - go to the next middleware
 */
 const getProject = async (req, res, next) => {
@@ -69,7 +69,7 @@ const getProject = async (req, res, next) => {
  * Create project
  * 
  * @param {Object} req - request
- * @param {Object} req - response
+ * @param {Object} res - response
  * @param {Function} next - go to the next middleware
 */
 const createProject = async (req, res, next) => {
@@ -104,7 +104,7 @@ const createProject = async (req, res, next) => {
  * Update project
  * 
  * @param {Object} req - request
- * @param {Object} req - response
+ * @param {Object} res - response
  * @param {Function} next - go to the next middleware
 */
 const updateProject = async (req, res, next) => {
@@ -139,7 +139,7 @@ const updateProject = async (req, res, next) => {
  * Delete project
  * 
  * @param {Object} req - request
- * @param {Object} req - response
+ * @param {Object} res - response
  * @param {Function} next - go to the next middleware
 */
 const deleteProject = async (req, res, next) => {
@@ -169,7 +169,7 @@ const deleteProject = async (req, res, next) => {
  * Add colaborator
  * 
  * @param {Object} req - request
- * @param {Object} req - response
+ * @param {Object} res - response
  * @param {Function} next - go to the next middleware
 */
 const addColaborator = async (req, res, next) => {
@@ -196,7 +196,7 @@ const addColaborator = async (req, res, next) => {
  * Delete colaborator
  * 
  * @param {Object} req - request
- * @param {Object} req - response
+ * @param {Object} res - response
  * @param {Function} next - go to the next middleware
 */
 const deleteColaborator = async (req, res, next) => {
@@ -223,7 +223,7 @@ const deleteColaborator = async (req, res, next) => {
  * Ask if the project exist by it's _id
  * 
  * @param {Object} req - request
- * @param {Object} req - response
+ * @param {Object} res - response
  * @param {Function} next - go to the next middleware
 */
 const askProjectExistById = async (req, res, next) => {
@@ -258,7 +258,7 @@ const askProjectExistById = async (req, res, next) => {
  * Ask if the project belongs to the current logged user
  * 
  * @param {Object} req - request
- * @param {Object} req - response
+ * @param {Object} res - response
  * @param {Function} next - go to the next middleware
 */
 const aksProjectOwnership = async (req, res, next) => {

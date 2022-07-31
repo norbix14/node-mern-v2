@@ -21,7 +21,7 @@ import {
  * Get all users
  * 
  * @param {Object} req - request
- * @param {Object} req - response
+ * @param {Object} res - response
  * @param {Function} next - go to the next middleware
 */
 const getUsers = async (req, res, next) => {
@@ -50,7 +50,7 @@ const getUsers = async (req, res, next) => {
  * Create user
  * 
  * @param {Object} req - request
- * @param {Object} req - response
+ * @param {Object} res - response
  * @param {Function} next - go to the next middleware
 */
 const createUser = async (req, res, next) => {
@@ -89,7 +89,7 @@ const createUser = async (req, res, next) => {
  * Update user
  * 
  * @param {Object} req - request
- * @param {Object} req - response
+ * @param {Object} res - response
  * @param {Function} next - go to the next middleware
 */
 const updateUser = async (req, res, next) => {
@@ -116,7 +116,7 @@ const updateUser = async (req, res, next) => {
  * Delete user
  * 
  * @param {Object} req - request
- * @param {Object} req - response
+ * @param {Object} res - response
  * @param {Function} next - go to the next middleware
 */
 const deleteUser = async (req, res, next) => {
@@ -144,7 +144,7 @@ const deleteUser = async (req, res, next) => {
  * the request
  * 
  * @param {Object} req - request
- * @param {Object} req - response
+ * @param {Object} res - response
  * @param {Function} next - go to the next middleware
 */
 const checkUserExistByEmail = async (req, res, next) => {
@@ -181,7 +181,7 @@ const checkUserExistByEmail = async (req, res, next) => {
  * middleware or return an error response
  * 
  * @param {Object} req - request
- * @param {Object} req - response
+ * @param {Object} res - response
  * @param {Function} next - go to the next middleware
 */
 const askUserEmailIsInUse = async (req, res, next) => {
@@ -218,7 +218,7 @@ const askUserEmailIsInUse = async (req, res, next) => {
  * Header
  * 
  * @param {Object} req - request
- * @param {Object} req - response
+ * @param {Object} res - response
  * @param {Function} next - go to the next middleware
 */
 const checkUserExistByToken = async (req, res, next) => {
@@ -259,7 +259,7 @@ const checkUserExistByToken = async (req, res, next) => {
  * middleware or return an error response
  * 
  * @param {Object} req - request
- * @param {Object} req - response
+ * @param {Object} res - response
  * @param {Function} next - go to the next middleware
 */
 const askUserAccountIsConfirmed = async (req, res, next) => {
@@ -293,7 +293,7 @@ const askUserAccountIsConfirmed = async (req, res, next) => {
  * Ask if the user password match
  * 
  * @param {Object} req - request
- * @param {Object} req - response
+ * @param {Object} res - response
  * @param {Function} next - go to the next middleware
 */
 const askUserPasswordMatch = async (req, res, next) => {
@@ -329,7 +329,7 @@ const askUserPasswordMatch = async (req, res, next) => {
  * Log the user and return the JSONWEBTOKEN
  * 
  * @param {Object} req - request
- * @param {Object} req - response
+ * @param {Object} res - response
  * @param {Function} next - go to the next middleware
 */
 const loginUser = async (req, res, next) => {
@@ -345,8 +345,50 @@ const loginUser = async (req, res, next) => {
 	try {
 		payload = {
 			id: currentUser._id,
-		}
+		};
 		token = generateJwt(payload);
+		decodedToken = decodeJwt(token);
+		currentUser.password = '**********';
+		jsonResponse.user = currentUser;
+		jsonResponse.token = token;
+		jsonResponse.session = {
+			creation: Number(decodedToken.iat + '000') || null,
+			expiration: Number(decodedToken.exp + '000') || null,
+		};
+		status = 200;
+	} catch (error) {
+		status = status || 500;
+		jsonResponse.msg = error.message || 'Something wrong happened';
+		jsonResponse.details = {
+			...jsonResponse.details,
+			error,
+		};
+	}
+	return res.status(status).json(jsonResponse);
+};
+
+/**
+ * Relog the user and return the JSONWEBTOKEN
+ * 
+ * @param {Object} req - request
+ * @param {Object} res - response
+ * @param {Function} next - go to the next middleware
+*/
+const sessionExtension = async (req, res, next) => {
+	let jsonResponse, status, payload, token, decodedToken;
+	const { currentUser } = req;
+	jsonResponse = {
+		details: {},
+		msg: 'Session extended',
+		user: {},
+		token: '',
+		session: {},
+	};
+	try {
+		payload = {
+			id: currentUser._id,
+		};
+		token = generateJwt(payload, { expiresIn: '30m' });
 		decodedToken = decodeJwt(token);
 		currentUser.password = '**********';
 		jsonResponse.user = currentUser;
@@ -371,7 +413,7 @@ const loginUser = async (req, res, next) => {
  * Add the user's data in the request
  * 
  * @param {Object} req - request
- * @param {Object} req - response
+ * @param {Object} res - response
  * @param {Function} next - go to the next middleware
 */
 const informUserAccountIsConfirmed = async (req, res, next) => {
@@ -401,7 +443,7 @@ const informUserAccountIsConfirmed = async (req, res, next) => {
  * send a response with the next steps
  * 
  * @param {Object} req - request
- * @param {Object} req - response
+ * @param {Object} res - response
  * @param {Function} next - go to the next middleware
 */
 const checkUserExistAndInformRecoverySteps = async (req, res, next) => {
@@ -437,7 +479,7 @@ const checkUserExistAndInformRecoverySteps = async (req, res, next) => {
  * Ask if the provided token is valid
  * 
  * @param {Object} req - request
- * @param {Object} req - response
+ * @param {Object} res - response
  * @param {Function} next - go to the next middleware
 */
 const askUserTokenIsValid = async (req, res, next) => {
@@ -472,7 +514,7 @@ const askUserTokenIsValid = async (req, res, next) => {
  * Check if the user exist and reset it's password
  * 
  * @param {Object} req - request
- * @param {Object} req - response
+ * @param {Object} res - response
  * @param {Function} next - go to the next middleware
 */
 const checkUserExistAndResetPassword = async (req, res, next) => {
@@ -511,7 +553,7 @@ const checkUserExistAndResetPassword = async (req, res, next) => {
  * Get the user's data
  * 
  * @param {Object} req - request
- * @param {Object} req - response
+ * @param {Object} res - response
  * @param {Function} next - go to the next middleware
 */
 const getUserProfileData = async (req, res, next) => {
@@ -561,4 +603,5 @@ export {
 	checkUserExistAndResetPassword,
 	informUserAccountIsConfirmed,
 	getUserProfileData,
+	sessionExtension,
 };

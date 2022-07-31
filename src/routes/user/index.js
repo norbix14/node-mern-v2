@@ -25,6 +25,7 @@ import {
 	checkUserExistAndResetPassword,
 	informUserAccountIsConfirmed,
 	getUserProfileData,
+	sessionExtension,
 } from '../../controllers/user/index.js';
 
 const router = Router();
@@ -54,6 +55,12 @@ export default function () {
 		askUserAccountIsConfirmed,
 		askUserPasswordMatch,
 		loginUser
+	);
+	router.post(
+		'/session/extend',
+		checkUserExistByEmail,
+		askUserAccountIsConfirmed,
+		sessionExtension
 	);
 	router.get(
 		'/confirm/:token',

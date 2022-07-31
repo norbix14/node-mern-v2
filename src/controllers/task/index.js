@@ -5,7 +5,7 @@ import Task from '../../models/Task.js';
  * Get tasks
  * 
  * @param {Object} req - request
- * @param {Object} req - response
+ * @param {Object} res - response
  * @param {Function} next - go to the next middleware
 */
 const getTasks = async (req, res, next) => {
@@ -35,7 +35,7 @@ const getTasks = async (req, res, next) => {
  * Get task
  * 
  * @param {Object} req - request
- * @param {Object} req - response
+ * @param {Object} res - response
  * @param {Function} next - go to the next middleware
 */
 const getTask = async (req, res, next) => {
@@ -64,7 +64,7 @@ const getTask = async (req, res, next) => {
  * Get task by project _id
  * 
  * @param {Object} req - request
- * @param {Object} req - response
+ * @param {Object} res - response
  * @param {Function} next - go to the next middleware
 */
 const getTasksByProjectId = async (req, res, next) => {
@@ -94,7 +94,7 @@ const getTasksByProjectId = async (req, res, next) => {
  * Update task
  * 
  * @param {Object} req - request
- * @param {Object} req - response
+ * @param {Object} res - response
  * @param {Function} next - go to the next middleware
 */
 const updateTask = async (req, res, next) => {
@@ -129,7 +129,7 @@ const updateTask = async (req, res, next) => {
  * Delete task
  * 
  * @param {Object} req - request
- * @param {Object} req - response
+ * @param {Object} res - response
  * @param {Function} next - go to the next middleware
 */
 const deleteTask = async (req, res, next) => {
@@ -158,7 +158,7 @@ const deleteTask = async (req, res, next) => {
  * Create task
  * 
  * @param {Object} req - request
- * @param {Object} req - response
+ * @param {Object} res - response
  * @param {Function} next - go to the next middleware
 */
 const createTask = async (req, res, next) => {
@@ -193,7 +193,7 @@ const createTask = async (req, res, next) => {
  * Update task status
  * 
  * @param {Object} req - request
- * @param {Object} req - response
+ * @param {Object} res - response
  * @param {Function} next - go to the next middleware
 */
 const updateTaskStatus = async (req, res, next) => {
@@ -220,7 +220,7 @@ const updateTaskStatus = async (req, res, next) => {
  * Ask if project exist by it's _id
  * 
  * @param {Object} req - request
- * @param {Object} req - response
+ * @param {Object} res - response
  * @param {Function} next - go to the next middleware
 */
 const askProjectExistById = async (req, res, next) => {
@@ -255,7 +255,7 @@ const askProjectExistById = async (req, res, next) => {
  * Ask if the project belongs to the current logged user
  * 
  * @param {Object} req - request
- * @param {Object} req - response
+ * @param {Object} res - response
  * @param {Function} next - go to the next middleware
 */
 const askProjectOwnership = async (req, res, next) => {
@@ -289,7 +289,7 @@ const askProjectOwnership = async (req, res, next) => {
  * Ask if the task exist by it's _id
  * 
  * @param {Object} req - request
- * @param {Object} req - response
+ * @param {Object} res - response
  * @param {Function} next - go to the next middleware
 */
 const askTaskExistById = async (req, res, next) => {
@@ -326,7 +326,7 @@ const askTaskExistById = async (req, res, next) => {
  * Ask if the task belongs to the current logged user
  * 
  * @param {Object} req - request
- * @param {Object} req - response
+ * @param {Object} res - response
  * @param {Function} next - go to the next middleware
 */
 const askTaskOwnership = async (req, res, next) => {

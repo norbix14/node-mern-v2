@@ -4,7 +4,7 @@ import 'dotenv/config';
  * Get info about the API
  * 
  * @param {Object} req - request
- * @param {Object} req - response
+ * @param {Object} res - response
  * @param {Function} next - go to the next middleware
 */
 const getHome = (req, res, next) => {
@@ -51,6 +51,7 @@ const getHome = (req, res, next) => {
 					['PUT', '/api/users/update'],
 					['DELETE', '/api/users/delete'],
 					['POST', '/api/users/login'],
+					['POST', '/api/users/session/extend'],
 					['GET', '/api/users/confirm/:token'],
 					['POST', '/api/users/forgot'],
 					['GET', '/api/users/forgot/:token'],
